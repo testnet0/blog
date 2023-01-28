@@ -10,9 +10,9 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://你的ip:3306/blog?serverTimezone=Asia/Shanghai&allowMultiQueries=true
-    username: MYSQL用户名
-    password: MYSQL密码
+    url: jdbc:mysql://mysql:3306/blog?serverTimezone=Asia/Shanghai&allowMultiQueries=true
+    username: root
+    password: <mysql_password>
     hikari:
       minimum-idle: 5
       # 空闲连接存活最大时间，默认600000（10分钟）
@@ -30,32 +30,28 @@ spring:
       connection-test-query: SELECT 1
   # redis配置
   redis:
-    host: 你的ip
+    host: redis
     port: 6379
-    password: Redis密码
   # mq配置
   rabbitmq:
-    host: 你的ip
+    host: rabbit
     port: 5672
-    username: rabbitmq用户名
-    password: rabbitmq密码
+    username: guest
+    password: guest
     listener:
       simple:
         retry:
           enabled: true
           max-attempts: 3 #最大重试次数
           initial-interval: 3000 #重试间隔时间（单位毫秒）
-  # es配置 若搜索模式为mysql可删除
-  elasticsearch:
-    rest:
-      uris: 你的IP:9200
   # 邮箱配置
   mail:
-    host: smtp.qq.com
-    username: 邮箱用户名
-    password: 邮箱授权码
+    host: <mail_host>
+    username: <mail_username>
+    password: <mail_password>
     default-encoding: UTF-8
-    port: 587
+    port: <mail_port>
+    # protocol: smtps 如果是smtps需要加上这个
     properties:
       mail:
       smtp:
@@ -85,7 +81,7 @@ upload:
   mode: local
   local:
     # nginx映射本地文件路径，无域名则为 ip:83
-    url: http://你的文件上传子域名/
+    url: http://upload.<domain>/
     # 本地文件存储路径
     path: /usr/local/upload/
   oss:
@@ -96,14 +92,14 @@ upload:
     bucketName: OSS配置bucketName
   cos:
     url: http://Bucket域名/
-    secretId: cos的secretId
-    secretKey: cos的secretKey
-    region: cos的region
-    bucketName: cos的bucketName
+    secretId: xx
+    secretKey: xx
+    region: xx
+    bucketName: xx
 
 # 网站前台域名（邮件通知用）
 website:
-  url: http://你的主域名或ip
+  url: http://<domain>/
 
 #第三方配置信息
 qq:
@@ -118,3 +114,22 @@ weibo:
   redirect-url: 微博回调地址
   access-token-url: https://api.weibo.com/oauth2/access_token
   user-info-url: https://api.weibo.com/2/users/show.json?uid={uid}&access_token={access_token}
+#验证码
+kaptcha:
+  width: 200
+  height: 50
+  content:
+    length: 4
+    source: ABCDEFGHIJKLMNOPQRSTUVWXYZ2345678923456789
+    space: 2
+  font:
+    name: Arial
+    size: 40
+    color: black
+  background-color:
+    from: lightGray
+    to: white
+  border:
+    enabled: true
+    color: black
+    thickness: 1

@@ -1,0 +1,66 @@
+version: '2'
+
+services:
+  mysql:
+    container_name: mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: <mysql_password>
+      MYSQL_DATABASE: blog
+    volumes:
+      - ./mysql_init:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/mysql
+    networks:
+      - mynet
+  redis:
+    container_name: redis
+    restart: always
+    image: redis
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - mynet
+  rabbit:
+    container_name: rabbit
+    restart: always
+    image: rabbitmq:management
+    networks:
+      - mynet
+  web:
+    build: .
+    container_name: web
+    restart: always
+    image: web:1.0
+    #links链接到其它服务中的容器
+    links:
+      - mysql
+      - redis
+      - rabbit
+    #tty: true 配置是为了容器保持后台运行，不退出
+    tty: true
+    networks:
+      - mynet
+    depends_on:
+      - mysql
+      - redis
+      - rabbit
+  nginx:
+    container_name: nginx
+    restart: always
+    image: nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./blog-vue/admin/dist:/usr/local/vue/admin
+      - ./blog-vue/blog/dist:/usr/local/vue/blog
+      - ./upload:/usr/local/upload
+    ports:
+      - "80:80"
+    links:
+      - web
+    networks:
+      - mynet
+networks:
+  mynet:
+    driver: bridge

@@ -205,6 +205,9 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuth> impl
      * @return 结果
      */
     private Boolean checkUser(UserVO user) {
+        if (!user.getCaptcha().equalsIgnoreCase((String) redisService.get(IMAGE_CODE_KEY + user.getTimestamp()))) {
+            throw new BizException("图形验证码错误！");
+        }
         if (!user.getCode().equals(redisService.get(USER_CODE_KEY + user.getUsername()))) {
             throw new BizException("验证码错误！");
         }

@@ -6,34 +6,21 @@
       </v-icon>
       <div class="login-wrapper">
         <!-- 用户名 -->
-        <v-text-field
-          v-model="email"
-          label="邮箱号"
-          placeholder="请输入您的邮箱号"
-          clearable
-          @keyup.enter="register"
-        />
+        <v-text-field v-model="email" label="邮箱号" placeholder="请输入您的邮箱号" clearable @keyup.enter="register" />
+        <!-- 图形验证码 -->
+        <div class="mt-7 in_code">
+          <img id="imgCode" :src="'/api/captcha?timestamp=' + this.timestamp" @click="handleCaptcha" />
+          <v-text-field v-model="captcha" maxlength="4" label="图形验证码" placeholder="请输入图形验证码" clearable />
+        </div>
         <!-- 验证码 -->
         <div class="mt-7 send-wrapper">
-          <v-text-field
-            maxlength="6"
-            v-model="code"
-            label="验证码"
-            placeholder="请输入6位验证码"
-            @keyup.enter="register"
-          />
+          <v-text-field maxlength="6" v-model="code" label="验证码" placeholder="请输入6位验证码" @keyup.enter="register" />
           <v-btn text small :disabled="flag" @click="sendCode">
             {{ codeMsg }}
           </v-btn>
         </div>
         <!-- 按钮 -->
-        <v-btn
-          class="mt-7"
-          block
-          color="blue"
-          style="color:#fff"
-          @click="saveUserEmail"
-        >
+        <v-btn class="mt-7" block color="blue" style="color:#fff" @click="saveUserEmail">
           绑定
         </v-btn>
       </div>
@@ -43,41 +30,42 @@
 
 <script>
 export default {
-  data: function() {
+  data: function () {
     return {
       email: this.$store.state.email,
       code: "",
       flag: true,
       codeMsg: "发送",
       time: 60,
-      show: false
+      show: false,
+      captcha: "",
+      timestamp: new Date().getTime(),
     };
   },
   methods: {
+    handleCaptcha() {
+      this.timestamp = new Date().getTime();
+      document.getElementById("imgCode").src = "/api/captcha?timestamp=" + this.timestamp;
+    },
     sendCode() {
       const that = this;
-      // eslint-disable-next-line no-undef
-      var captcha = new TencentCaptcha(this.config.TENCENT_CAPTCHA, function(
-        res
-      ) {
-        if (res.ret === 0) {
-          //发送邮件
-          that.countDown();
-          that.axios
-            .get("/api/users/code", {
-              params: { username: that.email }
-            })
-            .then(({ data }) => {
-              if (data.flag) {
-                that.$toast({ type: "success", message: data.message });
-              } else {
-                that.$toast({ type: "error", message: data.message });
-              }
-            });
-        }
-      });
-      // 显示验证码
-      captcha.show();
+      if (that.captcha.trim().length != 4) {
+        that.$toast({ type: "error", message: "请输入4位图形验证码" });
+        return false;
+      }
+      //发送邮件
+      that.axios
+        .get("/api/users/code", {
+          params: { timestamp: that.timestamp, captcha: that.captcha, username: that.email }
+        })
+        .then(({ data }) => {
+          if (data.flag) {
+            that.$toast({ type: "success", message: data.message });
+            that.countDown();
+          } else {
+            that.$toast({ type: "error", message: data.message });
+          }
+        });
     },
     countDown() {
       this.flag = true;
@@ -98,13 +86,19 @@ export default {
         this.$toast({ type: "error", message: "邮箱格式不正确" });
         return false;
       }
+      if (this.captcha.trim().length != 4) {
+        this.$toast({ type: "error", message: "请输入4位图形验证码" });
+        return false;
+      }
       if (this.code.trim().length != 6) {
-        this.$toast({ type: "error", message: "请输入6位验证码" });
+        this.$toast({ type: "error", message: "请输入6位邮箱验证码" });
         return false;
       }
       const user = {
         email: this.email,
-        code: this.code
+        code: this.code,
+        captcha: this.captcha,
+        timestamp: this.timestamp,
       };
       this.axios.post("/api/users/email", user).then(({ data }) => {
         if (data.flag) {

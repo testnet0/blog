@@ -44,4 +44,18 @@ public class UserVO {
     @ApiModelProperty(name = "code", value = "邮箱验证码", required = true, dataType = "String")
     private String code;
 
+    /**
+     * 图形验证码
+     */
+    @NotBlank(message = "图形验证码不能为空")
+    @ApiModelProperty(name = "captcha", value = "图形验证码", required = true, dataType = "String")
+    private String captcha;
+
+    /**
+     * 时间戳
+     */
+    @NotBlank(message = "时间戳不能为空")
+    @ApiModelProperty(name = "timestamp", value = "时间戳", required = true, dataType = "String")
+    private String timestamp;
+
 }

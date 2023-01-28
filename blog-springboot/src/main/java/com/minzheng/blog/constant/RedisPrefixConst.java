@@ -19,6 +19,11 @@ public class RedisPrefixConst {
     public static final String USER_CODE_KEY = "code:";
 
     /**
+     * 验证码
+     */
+    public static final String IMAGE_CODE_KEY = "KAPTCHA_SESSION_KEY:";
+
+    /**
      * 博客浏览量
      */
     public static final String BLOG_VIEWS_COUNT = "blog_views_count";

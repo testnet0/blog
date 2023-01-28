@@ -117,30 +117,21 @@ export default {
         return false;
       }
       const that = this;
-      // eslint-disable-next-line no-undef
-      var captcha = new TencentCaptcha(this.config.TENCENT_CAPTCHA, function(
-        res
-      ) {
-        if (res.ret === 0) {
-          //发送登录请求
-          let param = new URLSearchParams();
-          param.append("username", that.username);
-          param.append("password", that.password);
-          that.axios.post("/api/login", param).then(({ data }) => {
-            if (data.flag) {
-              that.username = "";
-              that.password = "";
-              that.$store.commit("login", data.data);
-              that.$store.commit("closeModel");
-              that.$toast({ type: "success", message: "登录成功" });
-            } else {
-              that.$toast({ type: "error", message: data.message });
-            }
-          });
+      //发送登录请求
+      let param = new URLSearchParams();
+      param.append("username", that.username);
+      param.append("password", that.password);
+      that.axios.post("/api/login", param).then(({ data }) => {
+        if (data.flag) {
+          that.username = "";
+          that.password = "";
+          that.$store.commit("login", data.data);
+          that.$store.commit("closeModel");
+          that.$toast({ type: "success", message: "登录成功" });
+        } else {
+          that.$toast({ type: "error", message: data.message });
         }
       });
-      // 显示验证码
-      captcha.show();
     },
     qqLogin() {
       //保留当前路径
