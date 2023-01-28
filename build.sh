@@ -9,6 +9,7 @@ if command -v mvn >/dev/null 2>&1 ; then
 echo "Maven is installed"
 else
 echo "mvn命令不存在，请先安装Maven"
+exit
 fi
 # 检测nodejs环境是否存在
 if command -v npm >/dev/null 2>&1 ; then
