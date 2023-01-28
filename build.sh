@@ -86,7 +86,7 @@ sed -i "s/<mail_port>/$mail_port/g" $current_dir"/blog-springboot/src/main/resou
 echo "================================"
 echo "开始编译代码"
 # 编译后端代码
-cd $current_dir + "/blog-springboot"
+cd $current_dir"/blog-springboot"
 mvn clean install
 if [ $? -eq 0 ]; then
 echo "Build Successful"
@@ -95,9 +95,9 @@ echo "Maveb Build Failed"
 fi
 
 # 编译前端代码
-cd $current_dir + "/blog-vue/admin"
+cd $current_dir"/blog-vue/admin"
 npm install && npm run build
-cd $current_dir + "/blog-vue/blog"
+cd $current_dir"/blog-vue/blog"
 npm install && npm run build
 echo "================================"
 echo "请去域名控制台，添加域名解析A记录,指向服务器的公网IP："
