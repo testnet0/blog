@@ -205,18 +205,22 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuth> impl
      * @return 结果
      */
     private Boolean checkUser(UserVO user) {
-        if (!user.getCaptcha().equalsIgnoreCase((String) redisService.get(IMAGE_CODE_KEY + user.getTimestamp()))) {
-            throw new BizException("图形验证码错误！");
-        }
-        if (!user.getCode().equals(redisService.get(USER_CODE_KEY + user.getUsername()))) {
-            throw new BizException("验证码错误！");
-        }
-        //查询用户名是否存在
-        UserAuth userAuth = userAuthDao.selectOne(new LambdaQueryWrapper<UserAuth>()
-                .select(UserAuth::getUsername)
-                .eq(UserAuth::getUsername, user.getUsername()));
-        return Objects.nonNull(userAuth);
-    }
+      String imageCode = (String) redisService.get(IMAGE_CODE_KEY + user.getTimestamp());
+      // 图形验证码一次有效
+      redisService.del(IMAGE_CODE_KEY + user.getTimestamp());
+      if (!user.getCaptcha().equalsIgnoreCase(imageCode)) {
+          redisService.del(IMAGE_CODE_KEY + user.getTimestamp());
+          throw new BizException("图形验证码错误！");
+      }
+      if (!user.getCode().equals(redisService.get(USER_CODE_KEY + user.getUsername()))) {
+          throw new BizException("验证码错误！");
+      }
+      //查询用户名是否存在
+      UserAuth userAuth = userAuthDao.selectOne(new LambdaQueryWrapper<UserAuth>()
+              .select(UserAuth::getUsername)
+              .eq(UserAuth::getUsername, user.getUsername()));
+      return Objects.nonNull(userAuth);
+  }
 
     /**
      * 统计用户地区

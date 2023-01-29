@@ -64,6 +64,7 @@ export default {
             that.countDown();
           } else {
             that.$toast({ type: "error", message: data.message });
+            this.handleCaptcha();
           }
         });
     },
@@ -109,6 +110,7 @@ export default {
           this.$toast({ type: "success", message: data.message });
         } else {
           this.$toast({ type: "error", message: data.message });
+          this.handleCaptcha();
         }
       });
     }

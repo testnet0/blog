@@ -76,6 +76,7 @@ export default {
             that.countDown();
           } else {
             that.$toast({ type: "error", message: data.message });
+            this.handleCaptcha();
           }
         });
     },
@@ -131,6 +132,7 @@ export default {
           this.$toast({ type: "success", message: "登录成功" });
         } else {
           this.$toast({ type: "error", message: data.message });
+          this.handleCaptcha();
         }
       });
     }
