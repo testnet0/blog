@@ -45,7 +45,7 @@ public class UserAuthController {
      * @param username 用户名
      * @return {@link Result<>}
      */
-    @AccessLimit(seconds = 60, maxCount = 1)
+    @AccessLimit(seconds = 60, maxCount = 10)
     @ApiOperation(value = "发送邮箱验证码")
     @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String")
     @GetMapping("/users/code")

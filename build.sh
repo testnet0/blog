@@ -2,8 +2,10 @@
 current_dir=$(pwd)
 
 function rm_docker {
-  docker-compose rm -f
-  docker image rm web:1.0
+  docker stop web
+  docker image rm web:1.0 -f 
+  docker build -t web:1.0 .
+  docker start web
 }
 #检测环境
 function check_environment {
@@ -123,10 +125,10 @@ npm install && npm run build
 function echo_end {
 echo "================================"
 echo "编译完成请去域名控制台，添加域名解析A记录,指向服务器的公网IP："
-echo $domain ====>IP
-echo "ws."$domain ====>IP
-echo "admin."$domain ====>IP
-echo "upload."$domain ====>IP
+echo $domain "====>IP"
+echo "ws."$domain "====>IP"
+echo "admin."$domain "====>IP"
+echo "upload."$domain "====>IP"
 echo "================================"
 }
 
